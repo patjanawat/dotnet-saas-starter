@@ -5,19 +5,19 @@ namespace SaaS.UnitTests;
 public sealed class TenantDomainTests
 {
     [Theory]
-    [InlineData("acme")]
-    [InlineData("acme-001")]
-    [InlineData("tenant-abc-123")]
-    public void TenantSlug_TryNormalize_ReturnsTrue_ForValidSlugs(string slug)
+    [InlineData("acme", "acme")]
+    [InlineData("Acme", "acme")]
+    [InlineData("acme-001", "acme-001")]
+    [InlineData("tenant-abc-123", "tenant-abc-123")]
+    public void TenantSlug_TryNormalize_ReturnsTrue_ForValidSlugs(string slug, string expectedNormalized)
     {
         var ok = TenantSlug.TryNormalize(slug, out var normalized);
 
         Assert.True(ok);
-        Assert.Equal(slug, normalized);
+        Assert.Equal(expectedNormalized, normalized);
     }
 
     [Theory]
-    [InlineData("Acme")]
     [InlineData("acme_1")]
     [InlineData("-acme")]
     [InlineData("acme-")]

@@ -42,6 +42,8 @@ Spec-driven .NET SaaS starter repository for building a modular monolith with cl
    - `dotnet test SaaS.Starter.sln`
 5. Testing guide:
    - `docs/testing.md`
+6. Common commands:
+   - `docs/common-commands.md`
 
 ## Local Dev Defaults
 

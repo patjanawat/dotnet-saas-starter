@@ -92,6 +92,35 @@ Design principles:
 - `UserCreatedEvent` published by User, consumed by Notification.
 - `AuthorizationPolicyEvaluated` telemetry event emitted to Observability.
 
+## Cross-Cutting Capability - API Contract Documentation
+Purpose:
+- Define a centralized API Documentation capability that keeps module contracts consistent, discoverable, and implementation-ready across the platform.
+
+Centralized documentation requirements:
+- OpenAPI generation must be centrally configured and applied uniformly across module APIs.
+- API endpoints must be grouped by module or bounded context to preserve ownership clarity.
+- Shared schemas must be reused for common contracts to avoid drift between modules.
+
+Module participation requirements:
+- Every module that exposes HTTP endpoints must contribute endpoint metadata and request/response contracts to the centralized API Documentation.
+- Module owners must keep endpoint summaries, parameter descriptions, and response contracts aligned with module requirements and acceptance criteria.
+- Contract changes that affect API Documentation must be reviewed by the owning module team before release.
+
+Shared conventions:
+- Bearer Authentication: protected endpoints must declare authentication requirements and required authorization context.
+- Errors: failure responses must align to `ProblemDetails` and `ValidationProblemDetails` contracts.
+- Response metadata: paginated and operation-result responses must follow shared metadata conventions across modules.
+
+Module examples:
+- Auth
+- Users
+- Roles
+- Tenants
+- Billing
+- Notifications
+- Webhooks
+- Health
+
 ## Module Interactions
 Interaction rules:
 1. A module may read another module only through published contract surfaces.

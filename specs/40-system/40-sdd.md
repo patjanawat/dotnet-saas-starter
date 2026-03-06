@@ -100,6 +100,50 @@ Idempotency and concurrency:
 - PUT and DELETE operations must be idempotent.
 - Mutating operations should support optimistic concurrency where entity versioning exists.
 
+## OpenAPI / Swagger Technical Design
+Documentation standard:
+- API Documentation must be published using OpenAPI 3.x as the machine-readable contract standard.
+- OpenAPI output must be deterministic for the same endpoint set and metadata inputs.
+
+Implementation baseline:
+- `Swashbuckle.AspNetCore` is the standard implementation for OpenAPI document generation and Swagger UI hosting.
+- Swagger UI is the standard interactive API explorer for internal development and integration validation workflows.
+
+Documentation routes:
+- OpenAPI JSON route baseline: `/swagger/{documentName}/swagger.json`.
+- Swagger UI route baseline: `/swagger`.
+- Document naming baseline starts with `v1` and remains extensible for additional API versions.
+
+Security documentation:
+- OpenAPI definitions must include Bearer Authentication using JWT bearer scheme (`Authorization: Bearer <token>`).
+- Protected endpoints must declare security requirements so authentication visibility is explicit in Swagger UI.
+
+Error contract documentation:
+- Reusable schema components must include `ProblemDetails` and `ValidationProblemDetails`.
+- Endpoint metadata must map expected non-success responses to these standard error schemas.
+
+Environment exposure policy:
+- Local and approved non-production environments may expose Swagger UI and OpenAPI JSON by default.
+- Production exposure of Swagger UI must be explicitly controlled by environment policy and disabled by default unless an approved operational need exists.
+- If production exposure is enabled, it must be protected by appropriate access controls.
+
+API Versioning readiness:
+- OpenAPI configuration must support multiple documents (for example, `v1`, `v2`) without requiring route convention rewrites.
+- Version grouping metadata must be attachable per endpoint to support progressive version rollout.
+
+Endpoint metadata requirements:
+- Endpoints must provide operation summary/description metadata.
+- Endpoints must declare request body schema, parameter schema, and response contract metadata.
+- Endpoints must declare auth requirements and standard error responses as part of contract metadata.
+
+XML comments integration:
+- XML documentation comments from API projects should be included in OpenAPI generation to improve operation and schema descriptions.
+- Missing XML comments should be treated as documentation quality debt and addressed during module evolution.
+
+Reusable schema components:
+- Shared schema components should be centralized for common envelopes and metadata patterns.
+- Schema reuse must be preferred over duplicating equivalent request/response definitions across modules.
+
 ## 5. Authentication and Authorization Design
 Authentication baseline:
 - ASP.NET Core Identity is the primary identity system.

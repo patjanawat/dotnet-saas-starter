@@ -83,6 +83,15 @@ FR-010: The platform shall provide baseline health check and observability endpo
 - NFR-006 Observability: Logs, traces, and metrics should enable root-cause analysis for cross-module and tenant-scoped issues.
 - NFR-007 Developer Experience: New feature modules should be scaffoldable with minimal manual boilerplate.
 
+## API Documentation Requirements
+- ADR-001: The platform shall provide machine-readable API Documentation for all supported HTTP endpoints.
+- ADR-002: The platform shall provide an interactive API explorer so developers and integrators can discover and evaluate endpoint behavior.
+- ADR-003: API Documentation shall expose request and response schema details, including required fields, validation expectations, and response status coverage.
+- ADR-004: API Documentation shall make authentication requirements visible per protected endpoint, including Bearer Authentication expectations where applicable.
+- ADR-005: API Documentation shall make standardized error response contracts visible, including `ProblemDetails` and `ValidationProblemDetails` usage expectations.
+- ADR-006: API Documentation shall be API Versioning-ready so multiple API versions can be represented without breaking existing consumers.
+- ADR-007: API Documentation exposure shall follow safe environment policies so public-facing documentation is enabled only in approved environments.
+
 ## Acceptance Criteria
 1. Given a tenant-scoped API request, when tenant context is missing or invalid, then the API returns an explicit error response and does not execute domain logic.
 2. Given a user lacking required role, when accessing a protected endpoint, then access is denied and the response uses standard `ProblemDetails`.

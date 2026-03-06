@@ -51,6 +51,22 @@ Code generation constraints:
 3. Keep infrastructure dependencies out of domain projects.
 4. Keep endpoint routes consistent with `/api/{module}/{resource}` or approved versioned form.
 
+## API Documentation Generation Rules
+AI-generated implementation changes must include:
+- Centralized OpenAPI/Swagger configuration in the application composition root.
+- Swagger service registration for API projects that expose HTTP endpoints.
+- Swagger middleware wiring aligned with environment policy rules.
+- JWT Bearer Authentication security definition in OpenAPI documents.
+- XML comments integration for enriched operation and schema descriptions.
+- Standard error schema exposure for `ProblemDetails` and `ValidationProblemDetails`.
+- API Versioning-ready OpenAPI document configuration (baseline `v1`, extensible for future versions).
+- Environment-aware documentation exposure rules so Swagger UI/OpenAPI endpoints are not unintentionally exposed in production.
+
+Generation quality gates:
+1. Do not generate per-module ad hoc Swagger setups that bypass centralized configuration.
+2. Do not omit auth, error, or response metadata from generated endpoint contracts.
+3. Do not generate documentation exposure behavior that violates environment policy requirements.
+
 ## Execution Plan
 Standard AI execution sequence:
 1. Parse requirements and build a requirement-to-code map.

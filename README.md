@@ -40,6 +40,8 @@ Spec-driven .NET SaaS starter repository for building a modular monolith with cl
    - `dotnet run --project src/SaaS.Api`
 4. Run tests:
    - `dotnet test SaaS.Starter.sln`
+5. Testing guide:
+   - `docs/testing.md`
 
 ## Local Dev Defaults
 

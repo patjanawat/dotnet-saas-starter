@@ -1,10 +1,8 @@
 namespace SaaS.Application.Common;
 
-public sealed record ApplicationError(string Code, string Message);
-
 public sealed class ApplicationResult<T>
 {
-    private ApplicationResult(bool succeeded, T? value, ApplicationError? error)
+    private ApplicationResult(bool succeeded, T? value, ErrorModel? error)
     {
         Succeeded = succeeded;
         Value = value;
@@ -13,10 +11,10 @@ public sealed class ApplicationResult<T>
 
     public bool Succeeded { get; }
     public T? Value { get; }
-    public ApplicationError? Error { get; }
+    public ErrorModel? Error { get; }
 
     public static ApplicationResult<T> Success(T value) => new(true, value, null);
 
-    public static ApplicationResult<T> Failure(string code, string message) =>
-        new(false, default, new ApplicationError(code, message));
+    public static ApplicationResult<T> Failure(string code, string message, int statusCode = 400) =>
+        new(false, default, new ErrorModel(code, message, statusCode));
 }

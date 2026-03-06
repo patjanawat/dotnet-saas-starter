@@ -11,6 +11,27 @@ services:
       - "5432:5432"
     volumes:
       - saas_starter_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U saas -d saas_starter"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: src/SaaS.Api/Dockerfile
+    container_name: saas-starter-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Database__UseInMemory: "false"
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=saas_starter;Username=saas;Password=saas_dev_password
+    ports:
+      - "8080:8080"
 
 volumes:
   saas_starter_postgres_data:

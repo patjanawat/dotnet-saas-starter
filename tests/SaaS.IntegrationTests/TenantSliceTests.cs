@@ -1,17 +1,15 @@
 using System.Net;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace SaaS.IntegrationTests;
 
-public sealed class TenantSliceTests : IClassFixture<WebApplicationFactory<Program>>
+public sealed class TenantSliceTests : IClassFixture<TestApiFactory>
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly TestApiFactory _factory;
 
-    public TenantSliceTests(WebApplicationFactory<Program> factory)
+    public TenantSliceTests(TestApiFactory factory)
     {
-        _factory = factory.WithWebHostBuilder(builder => builder.UseSetting("Database:UseInMemory", "true"));
+        _factory = factory;
     }
 
     [Fact]

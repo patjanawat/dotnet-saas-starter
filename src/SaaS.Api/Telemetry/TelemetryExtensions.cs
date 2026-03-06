@@ -1,3 +1,4 @@
+using OpenTelemetry.Resources;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
@@ -8,12 +9,21 @@ public static class TelemetryExtensions
     public static IServiceCollection AddSaaSTelemetry(this IServiceCollection services)
     {
         services.AddOpenTelemetry()
-            .WithTracing(tracing => tracing
+            .ConfigureResource(resource => resource.AddService("SaaS.Api"))
+            .WithTracing(tracing =>
+            {
+                tracing
                 .AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation())
-            .WithMetrics(metrics => metrics
+                .AddHttpClientInstrumentation()
+                .AddConsoleExporter();
+            })
+            .WithMetrics(metrics =>
+            {
+                metrics
                 .AddAspNetCoreInstrumentation()
-                .AddRuntimeInstrumentation());
+                .AddRuntimeInstrumentation()
+                .AddConsoleExporter();
+            });
 
         return services;
     }

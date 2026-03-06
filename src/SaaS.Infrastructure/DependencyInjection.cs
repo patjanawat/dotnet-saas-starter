@@ -22,7 +22,8 @@ public static class DependencyInjection
         var useInMemory = configuration.GetValue("Database:UseInMemory", false);
         if (useInMemory)
         {
-            services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("saas-starter"));
+            var inMemoryName = configuration.GetValue("Database:InMemoryName", "saas-starter");
+            services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase(inMemoryName!));
         }
         else
         {

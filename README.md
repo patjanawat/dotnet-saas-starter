@@ -41,6 +41,44 @@ Spec-driven .NET SaaS starter repository for building a modular monolith with cl
 4. Run tests:
    - `dotnet test SaaS.Starter.sln`
 
+## Local Dev Defaults
+
+- In-memory mode is enabled by default for fast local bootstrap:
+  - `Database:UseInMemory=true`
+  - `Database:InMemoryName=saas-starter-dev`
+- Seeded platform admin account:
+  - email: `admin@saas.local`
+  - password: `Admin!12345`
+- Invite flow bootstrap password for newly invited users:
+  - `TempPass!12345`
+
+## Docker Baseline
+
+`docker-compose.yml` includes:
+- `postgres` service (PostgreSQL 16)
+- `api` service (ASP.NET Core API container)
+
+Run:
+- `docker compose up --build`
+
+API default endpoint:
+- `http://localhost:8080`
+
+## Operational Baseline
+
+- Health:
+  - `GET /health/live`
+  - `GET /health/ready`
+- Telemetry:
+  - OpenTelemetry tracing + metrics wiring
+  - Console exporter enabled for dev visibility
+- Logging:
+  - Structured context scope includes `TraceId`, `UserId`, `TenantId`, request method/path
+- Error contract:
+  - `ProblemDetails` with `errorCode` + `traceId`
+- Audit hooks:
+  - Security-sensitive actions (login, tenant create, invite, role assign) emit audit logs
+
 ## Development Principles
 
 - Spec-first: start with/update specs before implementation.

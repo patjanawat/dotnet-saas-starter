@@ -15,9 +15,9 @@ public sealed class Tenant
 
     public static Tenant Create(string code, string name, DateTime createdAtUtc)
     {
-        if (string.IsNullOrWhiteSpace(code))
+        if (!TenantSlug.TryNormalize(code, out var normalizedCode))
         {
-            throw new ArgumentException("Tenant code is required.", nameof(code));
+            throw new ArgumentException("Tenant code must be a valid slug.", nameof(code));
         }
 
         if (string.IsNullOrWhiteSpace(name))
@@ -28,7 +28,7 @@ public sealed class Tenant
         return new Tenant
         {
             Id = Guid.NewGuid(),
-            Code = code.Trim().ToLowerInvariant(),
+            Code = normalizedCode,
             Name = name.Trim(),
             Status = TenantStatus.Pending,
             CreatedAtUtc = createdAtUtc

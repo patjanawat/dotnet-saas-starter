@@ -52,6 +52,8 @@ public static class DependencyInjection
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<ILoginCommandHandler, IdentityService>();
         services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<ICreateTenantCommandHandler, TenantService>();
+        services.AddScoped<IGetTenantByIdQueryHandler, TenantService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthorizationService, AuthorizationService>();
         services.AddScoped<IAccessControlService, AccessControlService>();

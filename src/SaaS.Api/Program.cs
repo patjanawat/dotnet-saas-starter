@@ -17,7 +17,10 @@ builder.Services.AddScoped<ICurrentUser, HttpContextCurrentUser>();
 builder.Services.AddScoped<ICurrentTenant, HttpContextCurrentTenant>();
 
 builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RoleAssignmentPolicy", policy => policy.RequireAuthenticatedUser());
+});
 builder.Services.AddHealthChecks();
 
 builder.Logging.ClearProviders();
@@ -39,6 +42,7 @@ app.MapFoundationHealthEndpoints();
 app.MapLoginEndpoints();
 app.MapTenantEndpoints();
 app.MapUserInvitationEndpoints();
+app.MapAuthorizationEndpoints();
 
 // Foundation probe endpoints used for baseline validation only.
 app.MapGet("/api/foundation/ping", () => Results.Ok(new { status = "ok" })).AllowAnonymous();

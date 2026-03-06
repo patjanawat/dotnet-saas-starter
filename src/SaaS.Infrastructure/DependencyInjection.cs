@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SaaS.Application.Contracts;
+using SaaS.Application.Authorization;
 using SaaS.Application.Identity;
 using SaaS.Application.User;
 using SaaS.Infrastructure.Identity;
@@ -58,6 +59,7 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IInviteUserCommandHandler, UserService>();
         services.AddScoped<IAuthorizationService, AuthorizationService>();
+        services.AddScoped<IAssignRoleCommandHandler, AuthorizationService>();
         services.AddScoped<IAccessControlService, AccessControlService>();
         services.AddScoped<IInvitationEmailSender, LoggingInvitationEmailSender>();
 

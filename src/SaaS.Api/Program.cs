@@ -47,7 +47,7 @@ app.MapAuthorizationEndpoints();
 
 // Foundation probe endpoints used for baseline validation only.
 app.MapGet("/api/foundation/ping", () => Results.Ok(new { status = "ok" })).AllowAnonymous();
-app.MapGet("/api/foundation/throw", () => throw new InvalidOperationException("Simulated failure")).AllowAnonymous();
+app.MapGet("/api/foundation/throw", (HttpContext _) => throw new InvalidOperationException("Simulated failure")).AllowAnonymous();
 
 app.Run();
 

@@ -4,6 +4,7 @@ using SaaS.Api.Tenant;
 using SaaS.Application.Common;
 using SaaS.Application.Tenant;
 using SaaS.Domain.Modules.Identity;
+using System.Security.Claims;
 
 namespace SaaS.Api.Endpoints;
 

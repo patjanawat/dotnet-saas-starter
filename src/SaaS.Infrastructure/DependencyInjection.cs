@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +11,7 @@ using SaaS.Infrastructure.Identity;
 using SaaS.Infrastructure.Persistence;
 using SaaS.Infrastructure.Seed;
 using SaaS.Infrastructure.Services;
+using SaaS.Application.Tenant;
 
 namespace SaaS.Infrastructure;
 

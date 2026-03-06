@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using SaaS.Application.Contracts;
 using SaaS.Application.Notification;
 

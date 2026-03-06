@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using SaaS.Infrastructure.Persistence;
 
 namespace SaaS.Api.Endpoints;
@@ -8,6 +9,11 @@ public static class FoundationHealthEndpoints
     public static IEndpointRouteBuilder MapFoundationHealthEndpoints(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("/health/live", () => Results.Ok(new { status = "live" }))
+            .WithTags("Health")
+            .WithGroupName("v1")
+            .WithSummary("Liveness probe")
+            .WithDescription("Returns process liveness for container and orchestrator probes.")
+            .Produces(StatusCodes.Status200OK)
             .AllowAnonymous();
 
         endpoints.MapGet("/health/ready", async (HttpContext httpContext, AppDbContext db, CancellationToken cancellationToken) =>
@@ -24,7 +30,14 @@ public static class FoundationHealthEndpoints
                         ["errorCode"] = "health.db_unavailable",
                         ["traceId"] = httpContext.TraceIdentifier
                     });
-        }).AllowAnonymous();
+        })
+        .WithTags("Health")
+        .WithGroupName("v1")
+        .WithSummary("Readiness probe")
+        .WithDescription("Returns readiness state based on critical dependency connectivity.")
+        .Produces(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status503ServiceUnavailable, "application/problem+json")
+        .AllowAnonymous();
 
         return endpoints;
     }

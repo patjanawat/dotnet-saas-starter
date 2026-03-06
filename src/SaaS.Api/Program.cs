@@ -1,13 +1,14 @@
 using SaaS.Api.Endpoints;
 using SaaS.Api.Middleware;
 using SaaS.Api.Security;
+using SaaS.Api.Swagger;
 using SaaS.Api.Telemetry;
 using SaaS.Application.Contracts;
 using SaaS.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
+builder.Services.AddSaaSSwagger();
 builder.Services.AddProblemDetails();
 builder.Services.AddSaaSInfrastructure(builder.Configuration);
 builder.Services.AddSaaSTelemetry();
@@ -28,9 +29,9 @@ builder.Logging.AddConsole();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("Swagger:Enabled"))
 {
-    app.MapOpenApi();
+    app.UseSaaSSwagger();
 }
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
@@ -46,8 +47,8 @@ app.MapUserInvitationEndpoints();
 app.MapAuthorizationEndpoints();
 
 // Foundation probe endpoints used for baseline validation only.
-app.MapGet("/api/foundation/ping", () => Results.Ok(new { status = "ok" })).AllowAnonymous();
-app.MapGet("/api/foundation/throw", (HttpContext _) => throw new InvalidOperationException("Simulated failure")).AllowAnonymous();
+app.MapGet("/api/foundation/ping", () => Results.Ok(new { status = "ok" })).AllowAnonymous().ExcludeFromDescription();
+app.MapGet("/api/foundation/throw", (HttpContext _) => throw new InvalidOperationException("Simulated failure")).AllowAnonymous().ExcludeFromDescription();
 
 app.Run();
 

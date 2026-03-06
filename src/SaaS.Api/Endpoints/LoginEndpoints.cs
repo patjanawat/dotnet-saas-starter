@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using SaaS.Api.Baseline;
 using SaaS.Api.Identity;
+using SaaS.Api.Swagger;
 using SaaS.Application.Identity;
 
 namespace SaaS.Api.Endpoints;
@@ -29,7 +30,14 @@ public static class LoginEndpoints
                 httpContext.TraceIdentifier);
 
             return TypedResults.Ok(new LoginResponse(value.UserId, value.Email, value.DisplayName));
-        }).AllowAnonymous();
+        })
+        .WithTags("Auth")
+        .WithGroupName("v1")
+        .WithSummary("Sign in user")
+        .WithDescription("Authenticates a user and returns a login contract for the active session.")
+        .Produces<LoginResponse>(StatusCodes.Status200OK)
+        .WithStandardProblemResponses(includeUnauthorized: true)
+        .AllowAnonymous();
 
         return endpoints;
     }

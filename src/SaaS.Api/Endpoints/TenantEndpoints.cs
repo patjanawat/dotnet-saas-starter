@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using SaaS.Api.Baseline;
+using SaaS.Api.Swagger;
 using SaaS.Api.Tenant;
 using SaaS.Application.Common;
 using SaaS.Application.Tenant;
@@ -33,7 +34,14 @@ public static class TenantEndpoints
 
             var tenant = result.Value!;
             return TypedResults.Ok(new TenantResponseModel(tenant.Id, tenant.Code, tenant.Name, tenant.Status));
-        }).RequireAuthorization();
+        })
+        .WithTags("Tenants")
+        .WithGroupName("v1")
+        .WithSummary("Create tenant")
+        .WithDescription("Creates a tenant using platform-level authorization and returns the tenant contract.")
+        .Produces<TenantResponseModel>(StatusCodes.Status200OK)
+        .WithStandardProblemResponses(includeUnauthorized: true, includeForbidden: true, includeValidation: true, includeConflict: true)
+        .RequireAuthorization();
 
         endpoints.MapGet("/api/tenant/tenants/{id:guid}", async Task<Results<Ok<TenantResponseModel>, ProblemHttpResult>> (
             Guid id,
@@ -56,7 +64,14 @@ public static class TenantEndpoints
 
             var tenant = result.Value!;
             return TypedResults.Ok(new TenantResponseModel(tenant.Id, tenant.Code, tenant.Name, tenant.Status));
-        }).RequireAuthorization();
+        })
+        .WithTags("Tenants")
+        .WithGroupName("v1")
+        .WithSummary("Get tenant by ID")
+        .WithDescription("Retrieves tenant details for platform administrators.")
+        .Produces<TenantResponseModel>(StatusCodes.Status200OK)
+        .WithStandardProblemResponses(includeUnauthorized: true, includeForbidden: true, includeNotFound: true)
+        .RequireAuthorization();
 
         return endpoints;
     }

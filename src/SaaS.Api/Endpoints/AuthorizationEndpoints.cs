@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http.HttpResults;
 using SaaS.Api.Authorization;
 using SaaS.Api.Baseline;
+using SaaS.Api.Swagger;
 using SaaS.Application.Authorization;
 using SaaS.Application.Common;
 using SaaS.Application.Contracts;
@@ -58,7 +59,14 @@ public static class AuthorizationEndpoints
                 httpContext.TraceIdentifier);
 
             return TypedResults.Ok(new AssignRoleResponseModel(value.UserProfileId, value.TenantId, value.RoleKey));
-        }).RequireAuthorization("RoleAssignmentPolicy");
+        })
+        .WithTags("Roles")
+        .WithGroupName("v1")
+        .WithSummary("Assign role to user")
+        .WithDescription("Assigns a role to a tenant-scoped user profile when authorization checks pass.")
+        .Produces<AssignRoleResponseModel>(StatusCodes.Status200OK)
+        .WithStandardProblemResponses(includeUnauthorized: true, includeForbidden: true, includeValidation: true, includeNotFound: true)
+        .RequireAuthorization("RoleAssignmentPolicy");
 
         return endpoints;
     }

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http.HttpResults;
 using SaaS.Api.Baseline;
+using SaaS.Api.Swagger;
 using SaaS.Api.UserInvitation;
 using SaaS.Application.Common;
 using SaaS.Application.Contracts;
@@ -56,7 +57,14 @@ public static class UserInvitationEndpoints
                 httpContext.TraceIdentifier);
 
             return TypedResults.Ok(new InviteUserResponseModel(value.UserProfileId, value.TenantId, value.Email, value.Status));
-        }).RequireAuthorization();
+        })
+        .WithTags("Users")
+        .WithGroupName("v1")
+        .WithSummary("Invite user to tenant")
+        .WithDescription("Invites a user to a tenant when caller has tenant admin or platform admin access.")
+        .Produces<InviteUserResponseModel>(StatusCodes.Status200OK)
+        .WithStandardProblemResponses(includeUnauthorized: true, includeForbidden: true, includeValidation: true, includeConflict: true)
+        .RequireAuthorization();
 
         return endpoints;
     }

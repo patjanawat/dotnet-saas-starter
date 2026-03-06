@@ -9,7 +9,7 @@ using SaaS.Infrastructure.Persistence;
 
 namespace SaaS.Infrastructure.Services;
 
-public sealed class IdentityService : IIdentityService
+public sealed class IdentityService : IIdentityService, ILoginCommandHandler
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
@@ -29,10 +29,13 @@ public sealed class IdentityService : IIdentityService
     }
 
     public async Task<ApplicationResult<SignInResponse>> SignInAsync(SignInIdentityCommand command, CancellationToken cancellationToken)
+        => await HandleAsync(command, cancellationToken);
+
+    public async Task<ApplicationResult<SignInResponse>> HandleAsync(SignInIdentityCommand command, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(command.UserNameOrEmail) || string.IsNullOrWhiteSpace(command.Password))
         {
-            return ApplicationResult<SignInResponse>.Failure("identity.invalid_input", "Username/email and password are required.");
+            return ApplicationResult<SignInResponse>.Failure("identity.invalid_input", "Username/email and password are required.", 400);
         }
 
         var normalized = command.UserNameOrEmail.Trim();
@@ -42,13 +45,13 @@ public sealed class IdentityService : IIdentityService
 
         if (user is null)
         {
-            return ApplicationResult<SignInResponse>.Failure("identity.invalid_credentials", "Invalid credentials.");
+            return ApplicationResult<SignInResponse>.Failure("identity.invalid_credentials", "Invalid credentials.", 401);
         }
 
         var result = await _signInManager.PasswordSignInAsync(user, command.Password, true, lockoutOnFailure: true);
         if (!result.Succeeded)
         {
-            return ApplicationResult<SignInResponse>.Failure("identity.invalid_credentials", "Invalid credentials.");
+            return ApplicationResult<SignInResponse>.Failure("identity.invalid_credentials", "Invalid credentials.", 401);
         }
 
         var now = _timeProvider.GetUtcNow().UtcDateTime;

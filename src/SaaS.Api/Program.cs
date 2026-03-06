@@ -1,4 +1,3 @@
-using SaaS.Api.Baseline;
 using SaaS.Api.Endpoints;
 using SaaS.Api.Middleware;
 using SaaS.Api.Security;
@@ -37,6 +36,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapFoundationHealthEndpoints();
+app.MapLoginEndpoints();
 
 // Foundation probe endpoints used for baseline validation only.
 app.MapGet("/api/foundation/ping", () => Results.Ok(new { status = "ok" })).AllowAnonymous();

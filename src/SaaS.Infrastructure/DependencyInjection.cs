@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SaaS.Application.Contracts;
+using SaaS.Application.Identity;
 using SaaS.Infrastructure.Identity;
 using SaaS.Infrastructure.Persistence;
 using SaaS.Infrastructure.Seed;
@@ -49,6 +50,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<ILoginCommandHandler, IdentityService>();
         services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthorizationService, AuthorizationService>();

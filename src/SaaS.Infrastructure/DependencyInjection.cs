@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SaaS.Application.Contracts;
 using SaaS.Application.Identity;
+using SaaS.Application.User;
 using SaaS.Infrastructure.Identity;
 using SaaS.Infrastructure.Persistence;
 using SaaS.Infrastructure.Seed;
@@ -55,8 +56,10 @@ public static class DependencyInjection
         services.AddScoped<ICreateTenantCommandHandler, TenantService>();
         services.AddScoped<IGetTenantByIdQueryHandler, TenantService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IInviteUserCommandHandler, UserService>();
         services.AddScoped<IAuthorizationService, AuthorizationService>();
         services.AddScoped<IAccessControlService, AccessControlService>();
+        services.AddScoped<IInvitationEmailSender, LoggingInvitationEmailSender>();
 
         services.AddHostedService<IdentitySeedHostedService>();
         services.AddSingleton(TimeProvider.System);

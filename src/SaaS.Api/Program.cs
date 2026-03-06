@@ -38,6 +38,7 @@ app.UseAuthorization();
 app.MapFoundationHealthEndpoints();
 app.MapLoginEndpoints();
 app.MapTenantEndpoints();
+app.MapUserInvitationEndpoints();
 
 // Foundation probe endpoints used for baseline validation only.
 app.MapGet("/api/foundation/ping", () => Results.Ok(new { status = "ok" })).AllowAnonymous();

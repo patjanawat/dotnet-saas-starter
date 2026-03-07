@@ -29,7 +29,9 @@ public static class DependencyInjection
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? "Host=localhost;Port=5432;Database=saas_starter;Username=postgres;Password=postgres";
-            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseNpgsql(connectionString, npgsql =>
+                    npgsql.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
         }
 
         services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>

@@ -12,26 +12,12 @@ public static class ProblemDetailsMapper
             statusCode: error.StatusCode,
             extensions: CreateExtensions(error.Code, traceId));
 
-    public static ProblemHttpResult ToProblem(this Exception exception, string traceId) =>
-        TypedResults.Problem(
-            title: "Unhandled server error",
-            detail: "An unexpected error occurred.",
-            statusCode: 500,
-            extensions: CreateExtensions("system.unhandled_exception", traceId, exception.GetType().Name));
-
-    private static Dictionary<string, object?> CreateExtensions(string errorCode, string traceId, string? exceptionType = null)
+    private static Dictionary<string, object?> CreateExtensions(string errorCode, string traceId)
     {
-        var extensions = new Dictionary<string, object?>
+        return new Dictionary<string, object?>
         {
             ["errorCode"] = errorCode,
             ["traceId"] = traceId
         };
-
-        if (!string.IsNullOrWhiteSpace(exceptionType))
-        {
-            extensions["exceptionType"] = exceptionType;
-        }
-
-        return extensions;
     }
 }

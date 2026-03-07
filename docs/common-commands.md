@@ -93,6 +93,7 @@ docker compose down
 ## Troubleshooting
 
 Detailed runbook: `docs/runbooks/troubleshooting.md`
+Global exception handling runbook: `docs/runbooks/exception-handling.md`
 
 List NuGet sources:
 

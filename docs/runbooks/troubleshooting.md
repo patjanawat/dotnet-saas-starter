@@ -2,6 +2,10 @@
 
 Quick guide for recurring local build/test issues in this repository.
 
+Related runbooks:
+- `docs/runbooks/exception-handling.md`
+- `docs/runbooks/logging-foundation.md`
+
 ## Golden Rule (NuGet Safety)
 
 - Do not change package versions unless the issue is proven to be package-related.

@@ -1,4 +1,5 @@
-﻿using SaaS.Api.Endpoints;
+﻿using SaaS.Api.Baseline;
+using SaaS.Api.Endpoints;
 using SaaS.Api.Middleware;
 using SaaS.Api.Security;
 using SaaS.Api.Swagger;
@@ -31,7 +32,14 @@ try
     });
 
     builder.Services.AddSaaSSwagger();
-    builder.Services.AddProblemDetails();
+    builder.Services.AddProblemDetails(options =>
+    {
+        options.CustomizeProblemDetails = context =>
+        {
+            context.ProblemDetails.Extensions.TryAdd("traceId", context.HttpContext.TraceIdentifier);
+        };
+    });
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddSaaSInfrastructure(builder.Configuration);
     builder.Services.AddSaaSTelemetry();
     builder.Services.AddHttpContextAccessor();
@@ -53,7 +61,7 @@ try
         app.UseSaaSSwagger();
     }
 
-    app.UseMiddleware<GlobalExceptionMiddleware>();
+    app.UseExceptionHandler();
     app.UseMiddleware<RequestContextLoggingMiddleware>();
     app.UseSerilogRequestLogging(options =>
     {

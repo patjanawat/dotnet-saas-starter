@@ -7,17 +7,15 @@ public static class ProblemDetailsMapper
 {
     public static ProblemHttpResult ToProblem(this ErrorModel error, string traceId) =>
         TypedResults.Problem(
-            title: "Request failed",
+            type: $"https://httpstatuses.com/{error.StatusCode}",
+            title: error.StatusCode >= StatusCodes.Status500InternalServerError
+                ? "Internal Server Error"
+                : "Request Failed",
             detail: error.Message,
             statusCode: error.StatusCode,
-            extensions: CreateExtensions(error.Code, traceId));
-
-    private static Dictionary<string, object?> CreateExtensions(string errorCode, string traceId)
-    {
-        return new Dictionary<string, object?>
-        {
-            ["errorCode"] = errorCode,
-            ["traceId"] = traceId
-        };
-    }
+            extensions: new Dictionary<string, object?>
+            {
+                ["errorCode"] = error.Code,
+                ["traceId"] = traceId
+            });
 }

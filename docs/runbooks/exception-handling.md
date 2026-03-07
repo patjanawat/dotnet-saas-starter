@@ -1,65 +1,83 @@
-﻿# Phase 2 Step 2.17: Global Exception Handling
+# Phase 2 - Step 2.17 - Global Exception Handling
 
-## Scope
-Introduce a production-friendly global exception flow in `SaaS.Api` with consistent `ProblemDetails` responses.
-This step does not add business features.
+## Overview
 
-## Error Handling Flow
+Global exception handling is implemented using ASP.NET Core's recommended `IExceptionHandler` approach and `ProblemDetails`.
+Unhandled exceptions are captured in one place and returned as consistent `application/problem+json` responses.
 
-1. API request enters middleware pipeline.
-2. `UseExceptionHandler()` catches unhandled exceptions from downstream.
-3. `GlobalExceptionHandler` maps exception types to an `ErrorModel`.
-4. `ErrorModel` is returned as RFC7807 `ProblemDetails` JSON via `TypedResults.Problem`.
-5. Logs are written with severity based on mapped status code.
+## How It Works
 
-## Mapping Structure
+1. `builder.Services.AddProblemDetails(...)` registers ProblemDetails support.
+2. `builder.Services.AddExceptionHandler<GlobalExceptionHandler>()` registers the global handler.
+3. `app.UseExceptionHandler()` is added early in the middleware pipeline to catch downstream errors.
+4. `GlobalExceptionHandler`:
+   - logs the exception with request context
+   - maps exception to a safe HTTP status/title/detail/type
+   - writes a ProblemDetails response through `IProblemDetailsService`
 
-`ExceptionMapping.Map(Exception)` currently handles:
+## ProblemDetails Response Fields
 
-- `AppException` -> uses application code/message/status
-- `BadHttpRequestException` -> `request.bad_request` (400)
-- fallback `Exception` -> `system.unhandled_exception` (500)
+Returned error responses include:
 
-This keeps the structure small now and extensible later for domain/application-specific exceptions.
-
-## Response Shape
-
-Global error responses follow `application/problem+json` with extensions:
-
-- `errorCode`
-- `traceId`
-
-Example fields:
-
+- `type`
 - `title`
-- `detail`
 - `status`
-- `errorCode`
-- `traceId`
+- `detail`
+- `traceId` (in `extensions`)
 
-Internal implementation details (for example exception type/stack trace) are not returned to clients.
+`traceId` is derived from the current request context (`Activity.Current?.Id` fallback to `HttpContext.TraceIdentifier`).
+
+## Logging Behavior
+
+- Unexpected exceptions are logged at `Error` level.
+- Request-related failures (for example bad requests) are logged at `Warning` level.
+- Log entries include request method, request path, and trace identifier.
+
+## Environment Behavior
+
+- Development:
+  - keeps the standard ProblemDetails shape
+  - adds minimal diagnostics via `extensions.exception` (exception type name)
+  - 500 detail uses exception message for easier local debugging
+- Production:
+  - does not include stack traces
+  - 500 detail is a safe generic message (`An unexpected error occurred.`)
 
 ## Verification
 
-From repository root:
+1. Build and run:
 
 ```powershell
-$env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE='1'
-$env:DOTNET_CLI_HOME="$PWD\\.dotnet-cli"
-
-dotnet build SaaS.Starter.sln
-dotnet run --project src/SaaS.Api/SaaS.Api.csproj
+dotnet build
+dotnet run --project src/SaaS.Api
 ```
 
-Trigger an error:
+2. Trigger a test exception:
 
 ```powershell
-curl http://localhost:5207/api/foundation/throw
+curl http://localhost:5000/api/foundation/error
 ```
 
-Expected behavior:
+Expected result:
 
-- HTTP status: `500`
+- HTTP status code: `500`
 - Content-Type: `application/problem+json`
-- JSON contains `errorCode = "system.unhandled_exception"` and non-empty `traceId`
-- logs contain matching `TraceId` and captured exception entry
+- JSON contains `type`, `title`, `status`, `detail`, and `traceId`
+
+Example shape:
+
+```json
+{
+  "type": "https://httpstatuses.com/500",
+  "title": "Internal Server Error",
+  "status": 500,
+  "detail": "An unexpected error occurred.",
+  "traceId": "..."
+}
+```
+
+## Intentionally Not Included Yet
+
+- No domain-specific exception taxonomy
+- No validation framework integration
+- No advanced error framework or custom envelope system

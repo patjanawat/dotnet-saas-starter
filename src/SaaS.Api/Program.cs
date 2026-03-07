@@ -64,8 +64,8 @@ try
         app.UseSaaSSwagger();
     }
 
-    app.UseSerilogRequestLogging();
     app.UseExceptionHandler();
+    app.UseSerilogRequestLogging();
     app.UseMiddleware<RequestContextLoggingMiddleware>();
 
     app.UseHttpsRedirection();
@@ -80,6 +80,7 @@ try
 
     // Foundation probe endpoints used for baseline validation only.
     app.MapGet("/api/foundation/ping", () => Results.Ok(new { status = "ok" })).AllowAnonymous().ExcludeFromDescription();
+    app.MapGet("/api/foundation/error", (HttpContext _) => throw new InvalidOperationException("Simulated failure")).AllowAnonymous().ExcludeFromDescription();
     app.MapGet("/api/foundation/throw", (HttpContext _) => throw new InvalidOperationException("Simulated failure")).AllowAnonymous().ExcludeFromDescription();
 
     Log.Information("SaaS.Api host configured. Starting request loop");

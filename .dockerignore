@@ -7,9 +7,15 @@
 **/bin
 **/obj
 **/TestResults
+**/coverage
+**/coverage.*
+**/*.coverage
+**/*.coveragexml
+**/*.trx
 
 .dotnet
 .dotnet-cli
+node_modules
 
 *.log
 *.tmp

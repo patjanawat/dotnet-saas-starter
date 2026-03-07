@@ -90,6 +90,8 @@ docker compose up --build
 docker compose down
 ```
 
+Runbook: `docs/runbooks/local-development.md`
+
 ## Troubleshooting
 
 Detailed runbook: `docs/runbooks/troubleshooting.md`

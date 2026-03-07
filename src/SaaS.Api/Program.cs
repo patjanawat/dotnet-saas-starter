@@ -1,4 +1,5 @@
 ﻿using SaaS.Api.Baseline;
+using SaaS.Api.Configuration;
 using SaaS.Api.Endpoints;
 using SaaS.Api.Middleware;
 using SaaS.Api.Security;
@@ -32,6 +33,7 @@ try
     });
 
     builder.Services.AddSaaSSwagger();
+    builder.Services.AddSaaSConfigurationOptions(builder.Configuration);
     builder.Services.AddProblemDetails(options =>
     {
         options.CustomizeProblemDetails = context =>

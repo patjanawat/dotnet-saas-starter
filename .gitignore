@@ -2,6 +2,10 @@
 [Bb]in/
 [Oo]bj/
 out/
+artifacts/
+publish/
+*.nupkg
+*.snupkg
 
 # Visual Studio
 .vs/
@@ -9,6 +13,8 @@ out/
 *.suo
 *.userosscache
 *.sln.docstates
+*.VC.db
+*.VC.opendb
 
 # Rider / ReSharper
 .idea/
@@ -19,12 +25,19 @@ _ReSharper*/
 # VS Code
 .vscode/
 
+# NuGet
+packages/
+*.nuget.props
+*.nuget.targets
+
 # Test output / coverage
 TestResults/
 coverage/
 coverage.*
 *.coverage
 *.coveragexml
+*.trx
+BenchmarkDotNet.Artifacts/
 
 # Logs
 *.log
@@ -40,7 +53,12 @@ appsettings.*.local.json
 # OS
 .DS_Store
 Thumbs.db
+Desktop.ini
 
 # Temporary local tooling cache
 .dotnet/
 .dotnet-cli/
+
+# Node/tooling (optional repo tooling)
+node_modules/
+dist/

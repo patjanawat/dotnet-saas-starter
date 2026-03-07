@@ -113,3 +113,8 @@ dotnet build SaaS.Starter.sln -c Debug -m:1
 If `CS1591` appears:
 - It indicates missing XML comments on public API types/members.
 - It is a documentation warning, not a runtime failure.
+
+## Phase Note
+
+- In Phase 2, this file was normalized and used as the single command baseline.
+- Step-specific command notes were merged here to avoid duplicate command docs.

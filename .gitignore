@@ -16,6 +16,9 @@ out/
 _ReSharper*/
 *.DotSettings.user
 
+# VS Code
+.vscode/
+
 # Test output / coverage
 TestResults/
 coverage/
@@ -40,3 +43,4 @@ Thumbs.db
 
 # Temporary local tooling cache
 .dotnet/
+.dotnet-cli/

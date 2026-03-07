@@ -10,16 +10,34 @@ indent_size = 2
 
 [*.cs]
 indent_size = 4
+csharp_new_line_before_open_brace = all
+csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_prefer_braces = true:suggestion
+dotnet_sort_system_directives_first = true
 
 [*.{csproj,props,targets,sln}]
+indent_size = 2
+
+[*.{json,yml,yaml}]
 indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
 
+# Naming conventions
 [*.cs]
-csharp_style_namespace_declarations = file_scoped:suggestion
-csharp_new_line_before_open_brace = all
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_symbols.interfaces.applicable_accessibilities = *
+dotnet_naming_style.interface_prefix.required_prefix = I
+dotnet_naming_style.interface_prefix.capitalization = pascal_case
+dotnet_naming_rule.interfaces_must_be_prefixed.symbols = interfaces
+dotnet_naming_rule.interfaces_must_be_prefixed.style = interface_prefix
+dotnet_naming_rule.interfaces_must_be_prefixed.severity = warning
 
-[*.{yml,yaml,json}]
-indent_size = 2
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_style.private_field_camel_case.capitalization = camel_case
+dotnet_naming_style.private_field_camel_case.required_prefix = _
+dotnet_naming_rule.private_fields_must_be_camel_case_with_prefix.symbols = private_fields
+dotnet_naming_rule.private_fields_must_be_camel_case_with_prefix.style = private_field_camel_case
+dotnet_naming_rule.private_fields_must_be_camel_case_with_prefix.severity = suggestion

@@ -92,6 +92,8 @@ docker compose down
 
 ## Troubleshooting
 
+Detailed runbook: `docs/runbooks/troubleshooting.md`
+
 List NuGet sources:
 
 ```powershell

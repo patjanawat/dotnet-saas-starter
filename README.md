@@ -1,91 +1,128 @@
 # SaaS.Starter
 
-Spec-driven .NET SaaS starter repository for building a modular monolith with clear architecture boundaries and execution guided by Markdown specifications.
+Spec-driven .NET 10 SaaS starter repository for a **Modular Monolith** using **Clean Architecture** boundaries.
 
-## Baselines
+## Project Overview
 
-- Architecture: modular monolith
-- Tenancy: shared database, shared schema, tenant isolation via `TenantId`
-- Auth: ASP.NET Core Identity with secure cookies now, JWT-ready later
-- Observability: OpenTelemetry-first (traces, metrics, logs)
+This repository provides a production-minded baseline for building SaaS capabilities incrementally.
+Focus is on maintainable architecture, predictable operations, and AI-assisted development workflows.
 
-## Repository Structure
+## Architecture Style
 
-- `src/`: application source projects
-  - `SaaS.Api`: ASP.NET Core Web API host
-  - `SaaS.Application`: application use cases and orchestration
-  - `SaaS.Domain`: core domain model and rules
-  - `SaaS.Infrastructure`: infrastructure adapters and integrations
-- `tests/`: automated tests
+- Modular Monolith
+- Clean Architecture layers:
+  - `SaaS.Api`
+  - `SaaS.Application`
+  - `SaaS.Domain`
+  - `SaaS.Infrastructure`
+  - `SaaS.Contracts`
   - `SaaS.UnitTests`
   - `SaaS.IntegrationTests`
-- `specs/`: source of truth for product and system intent
-  - `00-foundation`
-  - `10-business`
-  - `20-product`
-  - `30-modules`
-  - `40-system`
-  - `50-execution`
-- `docs/`: supporting documentation
 
-`/specs` is the source of truth. Code should implement approved specs, not replace them.
+## Tech Stack Summary
 
-## Getting Started
+- .NET 10, ASP.NET Core Web API
+- EF Core + PostgreSQL
+- ASP.NET Core Identity (cookie auth now, JWT-ready configuration)
+- Serilog structured logging
+- OpenTelemetry tracing/metrics
+- Swagger/OpenAPI
+- xUnit integration/unit tests
 
-1. Install .NET SDK 10+ (or compatible with this repository).
-2. Restore and build:
-   - `dotnet restore SaaS.Starter.sln`
-   - `dotnet build SaaS.Starter.sln`
-3. Run API:
-   - `dotnet run --project src/SaaS.Api`
-4. Run tests:
-   - `dotnet test SaaS.Starter.sln`
-5. Testing guide:
-   - `docs/testing.md`
-6. Common commands:
-   - `docs/common-commands.md`
+## Solution Structure
 
-## Local Dev Defaults
+- `src/`
+  - `SaaS.Api`: API host, endpoints, middleware, runtime composition
+  - `SaaS.Application`: use-case contracts and orchestration
+  - `SaaS.Domain`: domain model and rules
+  - `SaaS.Infrastructure`: persistence, identity, infra services
+  - `SaaS.Contracts`: shared contracts
+- `tests/`
+  - `SaaS.UnitTests`
+  - `SaaS.IntegrationTests`
+- `docs/`
+  - runbooks and operational notes
+- `specs/`
+  - product/system execution specs (source-of-truth intent)
 
-- In-memory mode is enabled by default for fast local bootstrap:
-  - `Database:UseInMemory=true`
-  - `Database:InMemoryName=saas-starter-dev`
-- Seeded platform admin account:
-  - email: `admin@saas.local`
-  - password: `Admin!12345`
-- Invite flow bootstrap password for newly invited users:
-  - `TempPass!12345`
+## Restore, Build, Run
 
-## Docker Baseline
+From repository root:
 
-`docker-compose.yml` includes:
-- `postgres` service (PostgreSQL 16)
-- `api` service (ASP.NET Core API container)
+```powershell
+dotnet restore SaaS.Starter.sln
+dotnet build SaaS.Starter.sln
+dotnet run --project src/SaaS.Api/SaaS.Api.csproj
+```
 
-Run:
-- `docker compose up --build`
+Default local API URL (launch settings): `http://localhost:5207`
 
-API default endpoint:
-- `http://localhost:8080`
+## Run with Docker
 
-## Operational Baseline
+Run API + PostgreSQL stack:
 
-- Health:
-  - `GET /health/live`
-  - `GET /health/ready`
-- Telemetry:
-  - OpenTelemetry tracing + metrics wiring
-  - Console exporter enabled for dev visibility
-- Logging:
-  - Structured context scope includes `TraceId`, `UserId`, `TenantId`, request method/path
-- Error contract:
-  - `ProblemDetails` with `errorCode` + `traceId`
-- Audit hooks:
-  - Security-sensitive actions (login, tenant create, invite, role assign) emit audit logs
+```powershell
+docker compose up --build
+```
 
-## Development Principles
+API URL via compose: `http://localhost:8080`
 
-- Spec-first: start with/update specs before implementation.
-- Keep modules explicit: enforce boundaries between Domain, Application, Infrastructure, and API.
-- Build incrementally: prefer small, reviewable changes per spec slice.
-- Production-minded defaults: secure by default, observable by default, testable by default.
+See runbook: `docs/runbooks/local-development.md`
+
+## Run Tests
+
+```powershell
+dotnet test SaaS.Starter.sln
+dotnet test tests/SaaS.UnitTests/SaaS.UnitTests.csproj
+dotnet test tests/SaaS.IntegrationTests/SaaS.IntegrationTests.csproj
+```
+
+See: `docs/testing.md`
+
+## EF Migrations
+
+Create migration:
+
+```powershell
+dotnet ef migrations add InitialFoundation -p src/SaaS.Infrastructure/SaaS.Infrastructure.csproj -s src/SaaS.Api/SaaS.Api.csproj -o Persistence/Migrations
+```
+
+Apply migration:
+
+```powershell
+dotnet ef database update -p src/SaaS.Infrastructure/SaaS.Infrastructure.csproj -s src/SaaS.Api/SaaS.Api.csproj
+```
+
+List migrations:
+
+```powershell
+dotnet ef migrations list -p src/SaaS.Infrastructure/SaaS.Infrastructure.csproj -s src/SaaS.Api/SaaS.Api.csproj
+```
+
+See: `docs/runbooks/persistence-foundation.md`
+
+## Repository Conventions
+
+- Spec-first and incremental delivery
+- Keep layer boundaries explicit
+- Prefer practical defaults over over-engineering
+- Use central package management (`Directory.Packages.props`)
+- Avoid package version changes unless truly necessary
+- Use runbooks for repeatable local operations/troubleshooting
+
+See:
+- `docs/common-commands.md`
+- `docs/repository-standards.md`
+- `docs/runbooks/troubleshooting.md`
+
+## Foundation Summary
+
+Current repository foundation includes:
+- repository standards
+- logging
+- global exception handling
+- strongly typed configuration/options
+- persistence and migration readiness
+- Docker Compose local stack
+
+Detailed summary: `docs/foundation-summary.md`

@@ -23,7 +23,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         var traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
-        var (statusCode, type, title, detail) = MapException(exception, _environment.IsDevelopment());
+        var (statusCode, type, title, detail, errorCode) = MapException(exception, _environment.IsDevelopment());
 
         if (statusCode >= StatusCodes.Status500InternalServerError)
         {
@@ -54,6 +54,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
         };
 
         problemDetails.Extensions["traceId"] = traceId;
+        problemDetails.Extensions["errorCode"] = errorCode;
 
         if (_environment.IsDevelopment())
         {
@@ -77,7 +78,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
         return true;
     }
 
-    private static (int StatusCode, string Type, string Title, string Detail) MapException(Exception exception, bool isDevelopment)
+    private static (int StatusCode, string Type, string Title, string Detail, string ErrorCode) MapException(Exception exception, bool isDevelopment)
     {
         return exception switch
         {
@@ -85,14 +86,16 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
                 StatusCodes.Status400BadRequest,
                 "https://httpstatuses.com/400",
                 "Bad Request",
-                "The request is invalid."),
+                "The request is invalid.",
+                "request.bad_request"),
             _ => (
                 StatusCodes.Status500InternalServerError,
                 "https://httpstatuses.com/500",
                 "Internal Server Error",
                 isDevelopment
                     ? exception.Message
-                    : "An unexpected error occurred.")
+                    : "An unexpected error occurred.",
+                "system.unhandled_exception")
         };
     }
 }

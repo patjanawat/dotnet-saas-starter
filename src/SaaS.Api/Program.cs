@@ -17,7 +17,7 @@ Log.Logger = new LoggerConfiguration()
         .Build())
     .Enrich.FromLogContext()
     .WriteTo.Console()
-    .CreateBootstrapLogger();
+    .CreateLogger();
 
 try
 {

@@ -1,61 +1,88 @@
 # Configuration and Options Foundation
 
-## Scope
-Add a strongly typed configuration baseline for `SaaS.Api` with practical validation and clean DI binding.
-
 ## Configuration Sections
 
-`appsettings.json` and `appsettings.Development.json` include:
+`src/SaaS.Api/appsettings.json` and `src/SaaS.Api/appsettings.Development.json` provide a clean starter structure with:
 
 - `ConnectionStrings`
 - `Jwt`
 - `Email`
 - `Logging`
 
-All values use safe placeholders for local/dev usage only. No real secrets are committed.
+All values are placeholder-safe and development-friendly. No real secrets are committed.
 
-## Options Classes Added
+## Strongly Typed Options Classes
 
-- `JwtOptions` (`Jwt` section)
+Options classes are defined in `src/SaaS.Api/Configuration`:
+
+- `JwtOptions`
   - `Issuer`
   - `Audience`
-  - `SigningKey` (min length validation)
-  - `AccessTokenMinutes` (range validation)
-- `EmailOptions` (`Email` section)
-  - provider/from/smtp fields
-  - basic required/format/range validation
+  - `SigningKey`
+  - `AccessTokenMinutes`
+- `EmailOptions`
+  - `Provider`
+  - `FromAddress`
+  - `FromName`
+  - `Host`
+  - `Port`
+  - `UseSsl`
+  - `Username`
+  - `Password`
 
-## DI Binding and Validation
+## Binding and Registration
 
-`AddSaaSConfigurationOptions()` binds and validates options:
+Binding is centralized in:
+
+- `ConfigurationOptionsRegistrationExtensions.AddSaaSConfigurationOptions(...)`
+
+Registration pattern:
 
 - `AddOptions<JwtOptions>()`
-  - bind section `Jwt`
-  - data annotations validation
-  - `ValidateOnStart()`
+  - binds `Jwt` section
+  - uses data annotations validation
+  - uses `ValidateOnStart()`
 - `AddOptions<EmailOptions>()`
-  - bind section `Email`
-  - data annotations validation
-  - lightweight additional rule for valid port
-  - `ValidateOnStart()`
+  - binds `Email` section
+  - uses data annotations validation
+  - adds lightweight port validation rule
+  - uses `ValidateOnStart()`
 
-This keeps startup behavior predictable and easy to extend.
+This keeps configuration binding maintainable and easy to extend for later modules.
+
+## Validation Summary
+
+- Data annotations enforce required fields and basic ranges/formats.
+- Startup-time validation (`ValidateOnStart`) fails fast on invalid configuration.
+- Validation remains intentionally lightweight for starter phase maintainability.
 
 ## Verification
 
-From repository root:
+Run from repository root:
 
 ```powershell
-$env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE='1'
-$env:DOTNET_CLI_HOME="$PWD\\.dotnet-cli"
-
-dotnet build SaaS.Starter.sln
-dotnet run --project src/SaaS.Api/SaaS.Api.csproj
+dotnet build
+dotnet run --project src/SaaS.Api
 ```
 
-How to confirm options binding works:
+How to confirm startup still works:
 
-1. Start API with current settings and confirm host starts successfully.
-2. Break one required value (for example set `Jwt:SigningKey` to short text).
-3. Restart API and confirm startup fails with options validation error.
-4. Restore valid placeholder value and confirm startup succeeds again.
+1. Start the API with current placeholders and confirm the host starts without options validation failures.
+
+How to confirm binding is wired correctly:
+
+1. Temporarily set an invalid value (for example a short `Jwt:SigningKey`).
+2. Restart the API and confirm startup fails with options validation error.
+3. Restore the placeholder and confirm startup succeeds again.
+
+How to inspect placeholder sections safely:
+
+1. Review `appsettings.json` and `appsettings.Development.json` values in source control.
+2. Confirm values are non-secret placeholders and environment-local defaults only.
+
+## Intentionally Deferred
+
+- JWT authentication implementation
+- Email sending implementation
+- Advanced configuration framework/custom providers
+- Persistence, Docker, and README expansion steps

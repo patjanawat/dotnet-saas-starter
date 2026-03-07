@@ -8,15 +8,16 @@ using SaaS.Api.Telemetry;
 using SaaS.Application.Contracts;
 using SaaS.Infrastructure;
 using Serilog;
-using Serilog.Events;
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+    .ReadFrom.Configuration(new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: false)
+        .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+        .AddEnvironmentVariables()
+        .Build())
     .Enrich.FromLogContext()
     .WriteTo.Console()
-    .CreateLogger();
+    .CreateBootstrapLogger();
 
 try
 {
@@ -63,33 +64,9 @@ try
         app.UseSaaSSwagger();
     }
 
+    app.UseSerilogRequestLogging();
     app.UseExceptionHandler();
     app.UseMiddleware<RequestContextLoggingMiddleware>();
-    app.UseSerilogRequestLogging(options =>
-    {
-        options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
-        options.GetLevel = (httpContext, elapsed, ex) =>
-        {
-            if (ex is not null || httpContext.Response.StatusCode >= 500)
-            {
-                return LogEventLevel.Error;
-            }
-
-            if (elapsed > 1000)
-            {
-                return LogEventLevel.Warning;
-            }
-
-            return LogEventLevel.Information;
-        };
-
-        options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
-        {
-            diagnosticContext.Set("TraceId", httpContext.TraceIdentifier);
-            diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
-            diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
-        };
-    });
 
     app.UseHttpsRedirection();
     app.UseAuthentication();

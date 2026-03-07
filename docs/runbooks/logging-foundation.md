@@ -1,56 +1,62 @@
-# Phase 2 Step 2.16: Logging Foundation
+# Phase 2 - Step 2.16 - Logging Foundation
 
 ## Purpose
 Establish a structured, production-friendly logging baseline for `SaaS.Api` using Serilog with minimal complexity.
 
-## What Was Added
-- Serilog host bootstrap logger during startup (`Program.cs`).
-- Serilog host integration via `builder.Host.UseSerilog(...)`.
-- HTTP request logging middleware via `app.UseSerilogRequestLogging(...)`.
-- Environment-aware log level defaults from configuration:
-  - `appsettings.json`: `Information` default, `Warning` for Microsoft/System noise.
-  - `appsettings.Development.json`: lower default level (`Debug`) for local diagnostics.
-- Console sink only (no external vendor sinks).
+## What Was Added or Updated
+- Updated `src/SaaS.Api/Program.cs`
+  - Serilog bootstrap logger is configured early to capture startup failures.
+  - Serilog remains the host logger via `builder.Host.UseSerilog(...)`.
+  - Added `app.UseSerilogRequestLogging()` with default concise structured request logging.
+  - Middleware order keeps request logging early in the pipeline.
+- Updated `src/SaaS.Api/SaaS.Api.csproj`
+  - Added `Serilog.Settings.Configuration` package reference.
+- Updated `Directory.Packages.props`
+  - Added central package version for `Serilog.Settings.Configuration`.
+- Updated `src/SaaS.Api/appsettings.Development.json`
+  - Serilog minimum levels aligned to balanced defaults:
+    - `Default`: `Information`
+    - `Microsoft.AspNetCore`: `Warning`
 
-## Design Notes
-- Startup logging captures failures before app host is fully built.
-- Request logging emits one structured event per request with status code and elapsed time.
-- Request logs are leveled by outcome:
-  - `Error` for unhandled exception / 5xx responses
-  - `Warning` for slow requests (> 1000 ms)
-  - `Information` otherwise
-- Existing request context scope middleware is preserved and complements structured request logs.
+## Logging Packages and Configuration
+- `Serilog.AspNetCore`: host integration and request logging middleware.
+- `Serilog.Settings.Configuration`: enables reading Serilog settings from appsettings.
+- `Serilog.Sinks.Console`: structured console output for local development and baseline hosting scenarios.
+
+## How Serilog Is Wired
+1. A bootstrap logger is created before host build.
+2. `UseSerilog(...)` wires Serilog into ASP.NET Core logging.
+3. The logger reads from application configuration (`appsettings*.json` + environment variables).
+4. Startup exceptions are captured in the `try/catch` with `Log.Fatal(...)`.
+5. Shutdown flushes logs with `Log.CloseAndFlush()`.
+
+## Request Logging Behavior
+- `app.UseSerilogRequestLogging()` is enabled.
+- Default Serilog request log includes method, path, status code, and elapsed time in a single structured event.
+- No custom noisy per-request enrichment is added at this stage.
 
 ## Verification
 Run from repository root:
 
 ```powershell
-$env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE='1'
-$env:DOTNET_CLI_HOME="$PWD\\.dotnet-cli"
-
-dotnet build SaaS.Starter.sln
-dotnet run --project src/SaaS.Api/SaaS.Api.csproj
+dotnet build
+dotnet run --project src/SaaS.Api
 ```
 
-In another shell, send a request:
+In another shell, send a sample request:
 
 ```powershell
-curl http://localhost:5207/health/live
-```
-
-Optional error-path check:
-
-```powershell
-curl http://localhost:5207/api/foundation/throw
+curl http://localhost:5000/api/foundation/ping
 ```
 
 ## Expected Logs
 - On startup:
-  - host start message
-  - application boot/configuration message
-  - framework hosting messages
+  - informational host startup logs from Serilog
 - Per request:
-  - `HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed} ms`
-  - structured properties including trace and request metadata
-- On unhandled exception:
-  - error from global exception middleware with trace identifier
+  - one concise request completion log containing method, path, status code, and elapsed milliseconds
+
+## Intentionally Not Included Yet
+- No OpenTelemetry changes in this step.
+- No external log aggregation sinks/platform integrations.
+- No domain/business logging abstractions.
+- No exception handling redesign or broader configuration refactor.

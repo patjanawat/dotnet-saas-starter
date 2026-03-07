@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\SaaS.Application\SaaS.Application.csproj" />
     <ProjectReference Include="..\..\src\SaaS.Domain\SaaS.Domain.csproj" />
   </ItemGroup>
 

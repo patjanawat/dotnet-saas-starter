@@ -30,3 +30,8 @@
 ## XML Comments
 - XML documentation is enabled for `SaaS.Api`.
 - Swagger includes XML comments when the generated XML file is present at runtime.
+- If `CS1591` warnings appear during build, it means public API models/endpoints still need XML comments (`/// <summary>...`).
+- Prioritize adding comments on:
+  - request/response contracts
+  - endpoint mapping extensions
+  - public middleware and security abstractions exposed from `SaaS.Api`

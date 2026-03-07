@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SaaS.Application\SaaS.Application.csproj" />
+    <ProjectReference Include="..\SaaS.Contracts\SaaS.Contracts.csproj" />
     <ProjectReference Include="..\SaaS.Infrastructure\SaaS.Infrastructure.csproj" />
   </ItemGroup>
 

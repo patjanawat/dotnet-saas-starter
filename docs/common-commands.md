@@ -31,6 +31,22 @@ dotnet test tests/SaaS.IntegrationTests/SaaS.IntegrationTests.csproj -c Debug --
 dotnet build src/SaaS.Api/SaaS.Api.csproj -c Debug -m:1
 ```
 
+## Project Reference Verification
+
+ใช้ตรวจ dependency graph ตาม Clean Architecture:
+
+```powershell
+dotnet build SaaS.Starter.sln
+
+dotnet list src/SaaS.Api/SaaS.Api.csproj reference
+dotnet list src/SaaS.Application/SaaS.Application.csproj reference
+dotnet list src/SaaS.Infrastructure/SaaS.Infrastructure.csproj reference
+dotnet list src/SaaS.Domain/SaaS.Domain.csproj reference
+dotnet list src/SaaS.Contracts/SaaS.Contracts.csproj reference
+dotnet list tests/SaaS.UnitTests/SaaS.UnitTests.csproj reference
+dotnet list tests/SaaS.IntegrationTests/SaaS.IntegrationTests.csproj reference
+```
+
 ## Run API
 
 ```powershell
@@ -108,4 +124,15 @@ dotnet --list-sdks
 Get-Process dotnet | Select-Object Id,ProcessName,MainWindowTitle
 Get-Process dotnet | Stop-Process -Force
 dotnet build SaaS.Starter.sln -c Debug -m:1
+```
+
+หากเจอ `CS1591` (Missing XML comment):
+- สาเหตุ: มี `public` type/member ใน `SaaS.Api` ที่ยังไม่มี `///` comment ขณะเปิด `GenerateDocumentationFile`
+- ผลกระทบ: เป็น warning เอกสาร ไม่ใช่ runtime error
+- แนวทางที่แนะนำ: เพิ่ม XML comments ให้ request/response contracts และ endpoints
+
+ตรวจเฉพาะ warning นี้:
+
+```powershell
+dotnet build src/SaaS.Api/SaaS.Api.csproj -c Debug -m:1 -v minimal
 ```

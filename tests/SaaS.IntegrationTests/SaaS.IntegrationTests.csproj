@@ -16,7 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\SaaS.Application\SaaS.Application.csproj" />
     <ProjectReference Include="..\..\src\SaaS.Api\SaaS.Api.csproj" />
+    <ProjectReference Include="..\..\src\SaaS.Contracts\SaaS.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\SaaS.Domain\SaaS.Domain.csproj" />
+    <ProjectReference Include="..\..\src\SaaS.Infrastructure\SaaS.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

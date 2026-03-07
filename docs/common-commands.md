@@ -31,6 +31,21 @@ dotnet test tests/SaaS.IntegrationTests/SaaS.IntegrationTests.csproj -c Debug --
 dotnet build src/SaaS.Api/SaaS.Api.csproj -c Debug -m:1
 ```
 
+## NuGet Baseline Verification
+
+ตรวจการทำงานของ Central Package Management และ package graph:
+
+```powershell
+dotnet restore SaaS.Starter.sln
+dotnet build SaaS.Starter.sln -c Debug -m:1
+
+dotnet list src/SaaS.Api/SaaS.Api.csproj package
+dotnet list src/SaaS.Application/SaaS.Application.csproj package
+dotnet list src/SaaS.Infrastructure/SaaS.Infrastructure.csproj package
+dotnet list tests/SaaS.UnitTests/SaaS.UnitTests.csproj package
+dotnet list tests/SaaS.IntegrationTests/SaaS.IntegrationTests.csproj package
+```
+
 ## Project Reference Verification
 
 ใช้ตรวจ dependency graph ตาม Clean Architecture:

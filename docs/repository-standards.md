@@ -1,43 +1,62 @@
-# Phase 2 Step 2.15: Repository Standards
+# Repository Standards
 
 ## Scope
-This step standardizes repository-wide engineering defaults for the .NET 10 SaaS starter.
-It does not add business logic or module-specific behavior.
+Repository-wide engineering defaults for the .NET 10 modular monolith SaaS starter.
+This document covers standards only and does not include business/module features.
 
-## Standards Added
+## Files Covered
+- `.editorconfig`
+- `.gitignore`
+- `Directory.Build.props`
+- `Directory.Packages.props`
+
+## Standards
 
 ### `.editorconfig`
-- Kept formatting defaults simple and consistent across file types.
-- Added balanced C# style suggestions (`var` usage, braces, file-scoped namespaces, accessibility modifiers).
-- Added naming rules for interfaces and private fields.
-- Marked generated C# files as generated code.
-- Set analyzer posture to suggestion-level defaults to support AI-assisted development without noisy hard failures.
+- Enforces UTF-8, LF line endings, trailing whitespace trim, and final newline.
+- Uses space indentation with 2-space default and 4 spaces for C# files.
+- Keeps C# style rules practical at `suggestion` level:
+  - file-scoped namespaces
+  - braces preference
+  - simplified `using` statements
+  - object/collection initializers
+  - collection expressions when type matching is appropriate
+- Naming conventions:
+  - interfaces use `I` prefix
+  - private fields use `_camelCase`
+  - async methods use `Async` suffix
+- Generated code patterns are marked as generated to reduce analyzer noise.
 
 ### `.gitignore`
-- Expanded to cover common .NET build outputs (`bin`, `obj`, `artifacts`, `publish`, NuGet package outputs).
-- Included IDE/workspace artifacts for Visual Studio, Rider, and VS Code.
-- Included test and coverage artifacts (`TestResults`, `*.trx`, coverage files, BenchmarkDotNet artifacts).
-- Kept local secrets and machine-local environment files ignored.
+- Ignores standard .NET build artifacts (`bin/`, `obj/`, `out/`, `artifacts/`, `publish/`).
+- Ignores IDE/editor artifacts for Visual Studio, Rider/ReSharper, and VS Code.
+- Ignores test and coverage outputs (`TestResults/`, `*.trx`, `*.coverage*`, `coverage/`).
+- Ignores local environment and machine-specific files (`.env*`, local appsettings variants, logs, temp/cache files).
 
 ### `Directory.Build.props`
-- Set shared solution defaults:
+- Sets repository defaults:
   - `TargetFramework=net10.0`
   - `Nullable=enable`
   - `ImplicitUsings=enable`
-  - `EnableNETAnalyzers=true`
-  - `AnalysisLevel=latest-recommended`
-  - `EnforceCodeStyleInBuild=false` (balanced mode)
+  - analyzers enabled (`EnableNETAnalyzers=true`, `AnalysisLevel=latest-recommended`)
+  - `EnforceCodeStyleInBuild=false`
   - `TreatWarningsAsErrors=false` (balanced mode)
   - `LangVersion=latest`
-  - `Deterministic=true`
-  - CI-aware deterministic build flag (`ContinuousIntegrationBuild` when `CI=true`)
+  - deterministic/CI-aware build flags
+- Sets `IsPackable=false` for test projects (`IsTestProject == true`).
 
 ### `Directory.Packages.props`
-- Confirmed central package management is enabled (`ManagePackageVersionsCentrally=true`).
-- Enabled transitive package pinning (`CentralPackageTransitivePinningEnabled=true`) for more consistent dependency resolution.
+- Central package version management is enabled (`ManagePackageVersionsCentrally=true`).
+- Transitive pinning is enabled (`CentralPackageTransitivePinningEnabled=true`).
+- Package versions are defined centrally to prevent per-project version drift.
 
-## Why This Matters
-- Creates consistent defaults across all projects in the modular monolith.
-- Supports production-minded development while keeping friction moderate for iterative AI-assisted workflows.
-- Prevents environment-specific artifacts from polluting commits.
-- Improves reproducibility and maintainability without over-constraining day-to-day development.
+## Why These Standards Fit A Balanced Starter
+- Enforces consistency and cleanliness across projects and contributors.
+- Maintains velocity with suggestion-level style guidance rather than strict failures.
+- Supports long-term maintainability and predictable builds without over-engineering.
+
+## Contributor and AI Guidance
+- Add or change package versions in `Directory.Packages.props`, not individual project files.
+- Keep repository-wide compiler/analyzer behavior in `Directory.Build.props`.
+- Follow `.editorconfig` conventions to reduce churn and review noise.
+- Update this document when repository standards change.

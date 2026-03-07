@@ -1,5 +1,6 @@
 <Project>
   <PropertyGroup>
+    <!-- Central package version management for all projects in the solution. -->
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>

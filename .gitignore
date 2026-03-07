@@ -62,3 +62,8 @@ Desktop.ini
 # Node/tooling (optional repo tooling)
 node_modules/
 dist/
+
+# Misc local temp/cache files
+*.tmp
+*.temp
+*.cache

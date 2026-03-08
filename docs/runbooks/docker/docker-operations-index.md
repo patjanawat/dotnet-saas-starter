@@ -1,55 +1,39 @@
 # Docker Operations Index
 
 ## Purpose
-Central index for Docker local development and recovery runbooks for this repository.
+Index for all Docker operational runbooks in this repository.
 
-## Quick Navigation
+## Scope
+Covers local Docker workflows for API + PostgreSQL using `docker compose`.
 
-| Runbook | What it is for | Who should use it | When to use it | Safety level |
-|---|---|---|---|---|
-| [Docker Local Dev Runbook](./docker-local-dev-runbook.md) | Daily start/stop/rebuild/logging workflow for API + Postgres | Developers, QA | Normal local work | Mostly safe (non-destructive by default) |
-| [Docker Troubleshooting Runbook](./docker-troubleshooting-runbook.md) | Incident-style diagnosis and recovery for Docker/Compose issues | Developers, QA, maintainers | When stack fails to start or connect | Mixed (includes destructive options) |
-| [Docker Data Reset Runbook](./docker-data-reset-runbook.md) | Controlled PostgreSQL data reset and recovery | Developers, QA | When local DB state is corrupted/stale | High risk (data-loss options included) |
+## Procedure
+Use this order:
 
-## Safe vs Destructive Commands
+1. Daily workflow: [Docker Local Dev Runbook](./docker-local-dev-runbook.md)
+2. DB reset workflow: [Docker Data Reset Runbook](./docker-data-reset-runbook.md)
+3. EF migration workflow: [Docker Migrations Runbook](./docker-migrations-runbook.md)
+4. Incident workflow: [Docker Troubleshooting Runbook](./docker-troubleshooting-runbook.md)
 
-### Safe (no database data deletion)
-- `docker compose up --build`
-- `docker compose up -d`
-- `docker compose stop`
-- `docker compose start`
-- `docker compose restart`
-- `docker compose logs -f`
-- `docker compose ps`
-- `docker compose down`
+Quick navigation:
 
-### Destructive (database data may be deleted)
-- `docker compose down -v`
-- `docker volume rm <volume-name>`
-- `docker system prune --volumes` (broad cleanup; use with caution)
+| Runbook | Use when | Audience | Safety |
+|---|---|---|---|
+| [docker-local-dev-runbook.md](./docker-local-dev-runbook.md) | Start/stop/rebuild stack | Dev/QA | Safe by default |
+| [docker-data-reset-runbook.md](./docker-data-reset-runbook.md) | Need clean DB state | Dev/QA | Can be destructive |
+| [docker-migrations-runbook.md](./docker-migrations-runbook.md) | Create/apply EF migrations | Dev | Mostly safe |
+| [docker-troubleshooting-runbook.md](./docker-troubleshooting-runbook.md) | Stack is failing | Dev/QA/Maintainer | Mixed |
 
-## Current Compose State Note
-- Active file: `docker-compose.yml`
-- Current mismatch to be aware of:
-  - Postgres image listens on container port `5432`, but compose currently maps `5433:5433` and API container uses `Host=postgres;Port=5433`.
-- Minimal safe correction:
-  - Change host/container mapping to `"5433:5432"` (or `"5432:5432"`)
-  - Change API connection string to `Host=postgres;Port=5432;...`
+## Verification
 
-## How to Use This Index
-1. Start with the local-dev runbook for daily workflows.
-2. If startup fails, jump to troubleshooting.
-3. If DB state is broken, follow the data-reset runbook and apply the minimum reset level first.
+```bash
+docker compose config
+```
 
-## Step Status
-- Current step: Docker runbooks index creation
-- Files created/updated:
-  - `docs/runbooks/docker/docker-operations-index.md`
-- Assumptions:
-  - Docker Desktop + Compose v2 are installed
-  - `docker-compose.yml` is the active compose file
-- Verification commands:
-  - `docker compose config`
-  - `docker compose ps`
-- Known gaps / follow-up recommendations:
-  - Align compose port/config mismatch described above to avoid DB connectivity confusion
+Expected: compose config renders without errors.
+
+## Recovery
+If links/paths break after doc moves:
+
+1. Run `git grep "docker-.*runbook" docs`
+2. Update links to relative paths from `docs/runbooks/docker/`
+3. Re-run `docker compose config` and key commands from local-dev runbook.

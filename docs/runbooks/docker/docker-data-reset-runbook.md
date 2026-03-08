@@ -107,7 +107,7 @@ Expected after successful reset:
 ## Step Status
 - Current step: Docker data reset runbook creation
 - Files created/updated:
-  - `docs/runbooks/docker-data-reset-runbook.md`
+  - `docs/runbooks/docker/docker-data-reset-runbook.md`
 - Assumptions:
   - Local data reset applies to development only
   - Compose-managed named volumes are used

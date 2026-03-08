@@ -44,7 +44,7 @@ Central index for Docker local development and recovery runbooks for this reposi
 ## Step Status
 - Current step: Docker runbooks index creation
 - Files created/updated:
-  - `docs/runbooks/docker-operations-index.md`
+  - `docs/runbooks/docker/docker-operations-index.md`
 - Assumptions:
   - Docker Desktop + Compose v2 are installed
   - `docker-compose.yml` is the active compose file

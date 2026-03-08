@@ -198,7 +198,7 @@ Success criteria:
 ## Step Status
 - Current step: Docker local-dev runbook creation
 - Files created/updated:
-  - `docs/runbooks/docker-local-dev-runbook.md`
+  - `docs/runbooks/docker/docker-local-dev-runbook.md`
 - Assumptions:
   - Docker Desktop and Compose v2 are available
   - `docker-compose.yml` is current source of truth

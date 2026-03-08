@@ -121,7 +121,7 @@ Issue is resolved when:
 ## Step Status
 - Current step: Docker troubleshooting runbook creation
 - Files created/updated:
-  - `docs/runbooks/docker-troubleshooting-runbook.md`
+  - `docs/runbooks/docker/docker-troubleshooting-runbook.md`
 - Assumptions:
   - Local stack is run via `docker compose`
   - Container names from current compose file are used
